@@ -1,0 +1,41 @@
+services:
+  mongo:
+    image: mongo:4.4
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    volumes:
+      - ./mongo-data:/data/db
+    networks:
+      - mongo-net
+
+  selenium:
+    platform: linux/amd64
+    image: selenium/standalone-chrome:latest
+    container_name: selenium_standalone_chrome
+    ports:
+      - "4444:4444"
+      - "7900:7900"
+    shm_size: '2gb'
+    networks:
+      - mongo-net
+    restart: unless-stopped
+    
+  scraper:
+    build: scraper
+    container_name: scraper
+    depends_on:
+      - selenium
+    volumes:
+      - ./scraper:/app
+    networks:
+      - mongo-net
+    restart: unless-stopped
+
+networks:
+  mongo-net:
+    driver: bridge
+  

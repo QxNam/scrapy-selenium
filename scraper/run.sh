@@ -1,0 +1,1 @@
+scrapy crawl vnexpress -o data/vnexpress.json
